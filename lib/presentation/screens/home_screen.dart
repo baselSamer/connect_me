@@ -5,6 +5,7 @@ import '../../injection.dart';
 import '../../services/biometric_service.dart';
 import '../blocs/auth_cubit.dart';
 import '../blocs/post_cubit.dart';
+import '../theme/app_theme.dart';
 import '../widgets/post_card.dart';
 import 'map_screen.dart';
 import 'profile_screen.dart';
@@ -16,6 +17,14 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final _search = TextEditingController();
+
+  @override
+  void dispose() {
+    _search.dispose();
+    super.dispose();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -102,20 +111,25 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  void _openMap() => Navigator.push(
+    context,
+    MaterialPageRoute<void>(builder: (_) => const MapScreen()),
+  );
+
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.sizeOf(context).width;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('ConnectMe'),
+        title: const Text(
+          'ConnectMe',
+          style: TextStyle(fontWeight: FontWeight.w800),
+        ),
         actions: [
           IconButton(
             tooltip: 'Community Map',
-            onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute<void>(builder: (_) => const MapScreen()),
-            ),
-            icon: const Icon(Icons.map_outlined),
+            onPressed: _openMap,
+            icon: const Icon(Icons.location_on_outlined),
           ),
           IconButton(
             tooltip: 'Profile',
@@ -127,50 +141,152 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Center(
         child: ConstrainedBox(
           constraints: BoxConstraints(maxWidth: width > 700 ? 680 : width),
-          child: BlocConsumer<PostCubit, PostState>(
-            listener: (context, state) {
-              if (state is PostLoaded && state.message != null) {
-                ScaffoldMessenger.of(context)
-                    .showSnackBar(SnackBar(content: Text(state.message!)));
-              }
-            },
-            builder: (context, state) {
-              if (state is PostLoading || state is PostInitial) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              if (state is PostError) {
-                return Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(state.message),
-                      TextButton(
-                        onPressed: context.read<PostCubit>().watch,
-                        child: const Text('Retry'),
-                      ),
-                    ],
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 14, 20, 0),
+                child: TextField(
+                  controller: _search,
+                  onChanged: (_) => setState(() {}),
+                  decoration: const InputDecoration(
+                    hintText: 'Search the community',
+                    prefixIcon: Icon(Icons.search_rounded),
                   ),
-                );
-              }
-              final posts = (state as PostLoaded).posts;
-              if (posts.isEmpty) {
-                return const Center(
-                  child: Text('No posts yet. Start the conversation!'),
-                );
-              }
-              return ListView.builder(
-                padding: const EdgeInsets.all(16),
-                itemCount: posts.length,
-                itemBuilder: (_, index) => PostCard(post: posts[index]),
-              );
-            },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(22, 22, 22, 14),
+                child: Row(
+                  children: [
+                    const Text(
+                      'Community',
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w800,
+                        color: AppPalette.ink,
+                      ),
+                    ),
+                    const Spacer(),
+                    DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: AppPalette.violet.withValues(alpha: .10),
+                        borderRadius: BorderRadius.circular(18),
+                      ),
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 8,
+                        ),
+                        child: Text(
+                          'Latest',
+                          style: TextStyle(
+                            color: AppPalette.violet,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: BlocConsumer<PostCubit, PostState>(
+                  listener: (context, state) {
+                    if (state is PostLoaded && state.message != null) {
+                      ScaffoldMessenger.of(
+                        context,
+                      ).showSnackBar(SnackBar(content: Text(state.message!)));
+                    }
+                  },
+                  builder: (context, state) {
+                    if (state is PostLoading || state is PostInitial) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    if (state is PostError) {
+                      return Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(state.message),
+                            TextButton(
+                              onPressed: context.read<PostCubit>().watch,
+                              child: const Text('Retry'),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+                    final query = _search.text.trim().toLowerCase();
+                    final posts = (state as PostLoaded).posts
+                        .where(
+                          (post) =>
+                              post.authorName.toLowerCase().contains(query) ||
+                              post.content.toLowerCase().contains(query),
+                        )
+                        .toList();
+                    if (posts.isEmpty) {
+                      return Center(
+                        child: Text(
+                          query.isEmpty
+                              ? 'No posts yet. Start the conversation!'
+                              : 'No posts match your search.',
+                        ),
+                      );
+                    }
+                    return ListView.builder(
+                      padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                      itemCount: posts.length,
+                      itemBuilder: (_, index) => PostCard(post: posts[index]),
+                    );
+                  },
+                ),
+              ),
+            ],
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: FloatingActionButton(
         onPressed: _newPost,
-        icon: const Icon(Icons.edit),
-        label: const Text('New post'),
+        backgroundColor: AppPalette.violet,
+        foregroundColor: Colors.white,
+        tooltip: 'New post',
+        child: const Icon(Icons.add_rounded, size: 31),
+      ),
+      bottomNavigationBar: BottomAppBar(
+        height: 66,
+        shape: const CircularNotchedRectangle(),
+        notchMargin: 8,
+        color: Colors.white,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            IconButton(
+              onPressed: () {
+                _search.clear();
+                setState(() {});
+              },
+              tooltip: 'Feed',
+              icon: const Icon(Icons.home_rounded, color: AppPalette.violet),
+            ),
+            IconButton(
+              onPressed: _openMap,
+              tooltip: 'Community map',
+              icon: const Icon(Icons.map_outlined),
+            ),
+            const SizedBox(width: 48),
+            IconButton(
+              onPressed: _openProfile,
+              tooltip: 'Profile',
+              icon: const Icon(Icons.person_outline_rounded),
+            ),
+            IconButton(
+              onPressed: _newPost,
+              tooltip: 'Write a post',
+              icon: const Icon(Icons.edit_outlined),
+            ),
+          ],
+        ),
       ),
     );
   }

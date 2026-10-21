@@ -9,6 +9,7 @@ import 'presentation/blocs/post_cubit.dart';
 import 'presentation/blocs/profile_cubit.dart';
 import 'presentation/screens/login_screen.dart';
 import 'presentation/screens/home_screen.dart';
+import 'presentation/theme/app_theme.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -46,19 +47,7 @@ class ConnectMeApp extends StatelessWidget {
     child: MaterialApp(
       title: 'ConnectMe',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF635BCA)),
-        scaffoldBackgroundColor: const Color(0xFFF7F7FC),
-        inputDecorationTheme: InputDecorationTheme(
-          filled: true,
-          fillColor: Colors.white,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide.none,
-          ),
-        ),
-      ),
+      theme: buildAppTheme(),
       home: BlocBuilder<AuthCubit, AuthState>(
         builder: (context, state) {
           if (state is AuthAuthenticated) return const HomeScreen();
