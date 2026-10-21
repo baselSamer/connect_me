@@ -51,7 +51,7 @@ firebase appdistribution:distribute build/app/outputs/flutter-apk/app-release.ap
   --project connectme-efaf1 --non-interactive
 ```
 
-Firebase CLI reported that version 0.2.0 (2) was distributed to both testers. [Open the release in Firebase Console](https://console.firebase.google.com/project/connectme-efaf1/appdistribution/app/android:com.example.connectme_app/releases/53bug8qrl0q90) or [open the tester release page](https://appdistribution.firebase.google.com/testerapps/1:1024765068666:android:759640172b3636270482c3/releases/53bug8qrl0q90).
+Firebase CLI reported that version 0.2.0 (2) was distributed to both testers.
 
 | Tester | Assigned to release | Invitation received | Installed |
 | --- | --- | --- | --- |
