@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1024765068666",
+    "project_id": "connectme-efaf1",
+    "storage_bucket": "connectme-efaf1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1024765068666:android:759640172b3636270482c3",
+        "android_client_info": {
+          "package_name": "com.example.connectme_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDc_GWgiTYgCN9I18RLfc4Fb6l9PwAs52s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
