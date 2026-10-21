@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -95,19 +96,16 @@ class ProfileCubit extends Cubit<ProfileState> {
         return;
       }
       final encoded = base64Encode(bytes);
-      await _firestore.db.collection('users').doc(current.user.id).update({
-        'photoBase64': encoded,
-      });
-      emit(
-        ProfileLoaded(
-          UserBuilder(current.user.id)
-              .withFullName(current.user.fullName)
-              .withEmail(current.user.email)
-              .withPhoto(encoded)
-              .build(),
-          current.device,
-        ),
-      );
+      final updatedUser = UserBuilder(current.user.id)
+          .withFullName(current.user.fullName)
+          .withEmail(_auth.currentUser?.email ?? current.user.email)
+          .withPhoto(encoded)
+          .build();
+      await _firestore.db
+          .collection('users')
+          .doc(current.user.id)
+          .set(updatedUser.toJson(), SetOptions(merge: true));
+      emit(ProfileLoaded(updatedUser, current.device));
     } catch (error) {
       emit(
         ProfileLoaded(

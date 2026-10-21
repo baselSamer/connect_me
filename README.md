@@ -11,6 +11,26 @@ The visual design follows the [Social App Free UI Kit](https://www.figma.com/com
 - Profile protected by device biometrics. The profile includes name, email, device model, OS version, and a gallery photo.
 - Google Map with members in Cairo, Alexandria, and Giza. Marker info windows show each member's name and city.
 
+## Screenshots
+
+Captured from the Android emulator.
+
+| Login | Sign Up |
+| --- | --- |
+| <img src="docs/screenshots/login.png" alt="ConnectMe Login screen" width="270"> | <img src="docs/screenshots/sign-up.png" alt="ConnectMe Sign Up screen" width="270"> |
+
+The Home Feed screenshot shows a post loaded from Firestore.
+
+<img src="docs/screenshots/home-feed.png" alt="ConnectMe Home Feed with a Firestore post" width="270">
+
+The profile gate uses the device's biometric prompt.
+
+<img src="docs/screenshots/biometric-prompt.png" alt="Biometric authentication prompt before opening Profile" width="270">
+
+| Profile | Community Map |
+| --- | --- |
+| <img src="docs/screenshots/profile.png" alt="ConnectMe Profile with a photo and device information" width="270"> | <img src="docs/screenshots/community-map.png" alt="Community Map with markers and an open member info window" width="270"> |
+
 ## Architecture
 
 ```text
@@ -39,7 +59,7 @@ Android uses `INTERNET` for Firebase and map tiles, and `USE_BIOMETRIC` for prof
 
 ## Beta distribution
 
-On **21 October 2026**, `flutter analyze` passed with no issues and `flutter build apk --release` produced `build/app/outputs/flutter-apk/app-release.apk` (54.0 MB), version **0.2.0 (2)**, SHA-256 `ef861cfb70db07476170ac1b247809300ad62da7e7f6acae1bdb09af7a897df0`. Firestore rules deployed successfully to `connectme-efaf1`.
+On **21 October 2026**, `flutter analyze` passed with no issues and `flutter build apk --release` produced `build/app/outputs/flutter-apk/app-release.apk` (54 MB), version **0.2.1 (3)**, SHA-256 `2a392087a064af5ed268ac6d8069d66738228c0ddda135a5ce7081716afc4a81`. Firestore rules deployed successfully to `connectme-efaf1`.
 
 The following command uploaded the APK and assigned the release to two testers:
 
@@ -47,16 +67,16 @@ The following command uploaded the APK and assigned the release to two testers:
 firebase appdistribution:distribute build/app/outputs/flutter-apk/app-release.apk \
   --app 1:1024765068666:android:759640172b3636270482c3 \
   --testers "$TESTER_EMAIL_1,$TESTER_EMAIL_2" \
-  --release-notes 'ConnectMe 0.2.0: redesigned sign-in, feed, profile and map based on the requested social UI kit; search added.' \
+  --release-notes 'ConnectMe 0.2.1: profile photo upload fix for existing accounts.' \
   --project connectme-efaf1 --non-interactive
 ```
 
-Firebase CLI reported that version 0.2.0 (2) was distributed to both testers.
+Firebase CLI reported that version 0.2.1 (3) was distributed to both testers.
 
 | Tester | Assigned to release | Invitation received | Installed |
 | --- | --- | --- | --- |
 | Tester A | Yes | Previous invitation confirmed | Pending |
 | Tester B | Yes | Previous invitation confirmed | Pending |
 
-The CLI confirms assignment to the new release. The user confirmed both initial invitations arrived; receipt of the new release and installation have not yet been confirmed on either device. Firebase Console screenshots and tester install screenshots are still needed for the requested visual evidence. The release was built with the starter project's debug signing configuration; use a dedicated release keystore for production and add its SHA-1 fingerprint to the Maps key restriction.
+The CLI confirms assignment to the new release. Both initial invitations arrived; receipt of the new release and installation have not yet been confirmed on either device. The release was built with the starter project's debug signing configuration; use a dedicated release keystore for production and add its SHA-1 fingerprint to the Maps key restriction.
 
