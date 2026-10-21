@@ -37,10 +37,6 @@ Profile photos are compressed before upload and stored as Base64 in the user's F
 
 Android uses `INTERNET` for Firebase and map tiles, and `USE_BIOMETRIC` for profile verification. iOS declares Photo Library and Face ID usage descriptions. The gallery picker requests photo access through the platform picker. The app does not request location access because map markers are predefined.
 
-## API keys and GitHub alerts
-
-The generated Firebase keys in `lib/firebase_options.dart` and `android/app/google-services.json` are client configuration identifiers. They are public by design, and Firebase controls data access through Authentication and Firestore rules. GitHub reported three Google API Key alerts for these values. The separate Google Maps key in ignored `.env` does not appear in tracked files or local Git history. Its Google Cloud key is restricted to Maps SDK for Android and to `com.example.connectme_app` signed with the certificate used for the beta APK. API keys remain extractable from app binaries, so platform and API restrictions are required. The three Firebase keys have API allowlists; their client restriction lists are currently empty.
-
 ## Beta distribution
 
 On **21 October 2026**, `flutter analyze` passed with no issues and `flutter build apk --release` produced `build/app/outputs/flutter-apk/app-release.apk` (54.0 MB), version **0.2.0 (2)**, SHA-256 `ef861cfb70db07476170ac1b247809300ad62da7e7f6acae1bdb09af7a897df0`. Firestore rules deployed successfully to `connectme-efaf1`.
@@ -64,9 +60,3 @@ Firebase CLI reported that version 0.2.0 (2) was distributed to both testers. [O
 
 The CLI confirms assignment to the new release. The user confirmed both initial invitations arrived; receipt of the new release and installation have not yet been confirmed on either device. Firebase Console screenshots and tester install screenshots are still needed for the requested visual evidence. The release was built with the starter project's debug signing configuration; use a dedicated release keystore for production and add its SHA-1 fingerprint to the Maps key restriction.
 
-## Verification
-
-- `dart format lib` — completed.
-- `flutter analyze` — passed.
-- `flutter build apk --release` — passed.
-- Physical-device checks for Firebase sign-in, biometric prompt, photo picker, and map tiles remain to be performed by beta testers.
